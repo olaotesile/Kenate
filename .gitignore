@@ -1,0 +1,22 @@
+# Prerequisites
+*.d
+
+# Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Build directory
+build/
+bin/
+lib/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+env/
+.vscode/
+.idea/

@@ -17,8 +17,11 @@ Kenate is built in layers:
 2. The Abstractor (C++): Handles state transitions and priorities.
 3. The Bridge (Pybind11): Exposes the power of C++ to a flexible Python interface.
 
+How to use:
+Run the pip install {framework name} and then learn the syntax
 
-
+The documentation will be published so users can learn the syntax
+Knowledge of Python is advised as I built the syntax to behave like Python on the surface but run C++ under the hood.
 
 
 Currently in early development. Building the core C++ Dispatcher.
