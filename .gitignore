@@ -18,5 +18,20 @@ __pycache__/
 *$py.class
 .venv/
 env/
-.vscode/
-.idea/
+
+
+# === Rules for MSVS / Visual Studio artifacts ===
+.vs/                   # Visual Studio 2017/2019/2022 cache & options
+*.sln                  # Solution files (CMake regenerates these)
+*.vcxproj              # Project files
+*.vcxproj.filters      # Project filters
+*.vcxproj.user         # User-specific project settings
+*.suo                  # User options
+*.user                 # User settings
+*.db                   # SQLite database (IntelliSense cache)
+ipch/                  # Precompiled headers cache
+
+# === CMake artifacts outside the build folder ===
+CMakeCache.txt         # Cache file
+CMakeFiles/            # Generated compiler info
+CMakeSettings.json     # VS-specific CMake settings
