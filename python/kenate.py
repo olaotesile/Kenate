@@ -4,7 +4,7 @@ import time
 class BaseState(_kb.BaseState):
     """
     Python wrapper for the C++ BaseState.
-    Users can inherit from this to define their own states in Python.
+    Users can inherit from this to define your own states in Python.
     """
     def __init__(self, name):
         super().__init__(name)

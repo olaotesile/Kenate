@@ -8,7 +8,6 @@
 #include <memory>
 #include <thread>
 
-
 namespace kenate {
 
 class Engine {
@@ -49,14 +48,17 @@ public:
 
 private:
   void run() {
-    auto interval = std::chrono::duration<double>(1.0 / frequency_hz_);
 
     if (current_state_) {
       current_state_->on_enter();
     }
 
+    using namespace std::chrono;
+    auto interval = nanoseconds(static_cast<int64_t>(1e9 / frequency_hz_));
+    auto next_wake = steady_clock::now();
+
     while (running_) {
-      auto start_tick = std::chrono::steady_clock::now();
+      next_wake += interval;
 
       // Handle transitions
       if (pending_state_) {
@@ -72,12 +74,7 @@ private:
         current_state_->on_update();
       }
 
-      auto end_tick = std::chrono::steady_clock::now();
-      auto elapsed = end_tick - start_tick;
-
-      if (elapsed < interval) {
-        std::this_thread::sleep_for(interval - elapsed);
-      }
+      std::this_thread::sleep_until(next_wake);
     }
 
     if (current_state_) {
