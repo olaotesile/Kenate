@@ -1,8 +1,9 @@
 #include <kenate/BaseState.hpp>
 #include <kenate/Engine.hpp>
+#include <kenate/hal/MockMotor.hpp>
+#include <kenate/hal/MotorInterface.hpp>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
-
 
 namespace py = pybind11;
 
@@ -44,4 +45,21 @@ PYBIND11_MODULE(kenate_bindings, m) {
       .def("start", &kenate::Engine::start)
       .def("stop", &kenate::Engine::stop)
       .def("set_frequency", &kenate::Engine::set_frequency);
+
+  // --- HAL Bindings ---
+  py::class_<kenate::hal::MotorInterface,
+             std::shared_ptr<kenate::hal::MotorInterface>>(m, "MotorInterface")
+      .def("set_velocity", &kenate::hal::MotorInterface::set_velocity)
+      .def("set_position", &kenate::hal::MotorInterface::set_position)
+      .def("set_effort", &kenate::hal::MotorInterface::set_effort)
+      .def("get_velocity", &kenate::hal::MotorInterface::get_velocity)
+      .def("get_position", &kenate::hal::MotorInterface::get_position)
+      .def("get_effort", &kenate::hal::MotorInterface::get_effort)
+      .def_property_readonly("name", &kenate::hal::MotorInterface::name);
+
+  py::class_<kenate::hal::MockMotor, kenate::hal::MotorInterface,
+             std::shared_ptr<kenate::hal::MockMotor>>(m, "MockMotor")
+      .def(py::init<std::string>())
+      .def("set_velocity", &kenate::hal::MockMotor::set_velocity)
+      .def("get_velocity", &kenate::hal::MockMotor::get_velocity);
 }

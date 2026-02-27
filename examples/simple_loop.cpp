@@ -1,48 +1,58 @@
 #include <atomic>
+#include <chrono>
 #include <csignal>
 #include <iostream>
 #include <kenate/BaseState.hpp>
 #include <kenate/Engine.hpp>
+#include <kenate/hal/MockMotor.hpp>
 
-
-class CountingState : public kenate::BaseState {
+class HighFreqState : public kenate::BaseState {
 public:
-  CountingState() : kenate::BaseState("Counting"), count(0) {}
+  HighFreqState()
+      : kenate::BaseState("HighFreq"), motor_("Joint1"), count_(0) {}
 
   void on_enter() override {
-    std::cout << "[C++] Entering Counting State" << std::endl;
+    std::cout << "[C++] Entering HighFreq State. Target: 1000Hz" << std::endl;
+    start_time_ = std::chrono::steady_clock::now();
+    last_print_ = start_time_;
   }
 
   void on_update() override {
-    count++;
-    std::cout << "[C++] Count: " << count << std::endl;
-    if (count >= 10) {
-      std::cout << "[C++] Finished reaching 10. Stopping engine..."
-                << std::endl;
-      // In a real scenario, we'd trigger a transition or external stop
+    count_++;
+    motor_.set_velocity(1.0); // forcing the fake motor to move
+
+    auto now = std::chrono::steady_clock::now();
+    if (std::chrono::duration_cast<std::chrono::seconds>(now - last_print_)
+            .count() >= 1) {
+      std::cout << "[C++] Ticks over last second: " << count_
+                << " | Motor Vel: " << motor_.get_velocity() << std::endl;
+      count_ = 0;
+      last_print_ = now;
     }
   }
 
   void on_exit() override {
-    std::cout << "[C++] Exiting Counting State" << std::endl;
+    std::cout << "[C++] Exiting HighFreq State" << std::endl;
   }
 
 private:
-  int count;
+  kenate::hal::MockMotor motor_;
+  int count_;
+  std::chrono::steady_clock::time_point start_time_;
+  std::chrono::steady_clock::time_point last_print_;
 };
 
 int main() {
   kenate::Engine engine;
-  engine.set_frequency(10.0); // 10Hz
+  engine.set_frequency(1000.0); // 1khz loop
 
-  auto counting_state = std::make_shared<CountingState>();
-  engine.add_state(counting_state);
+  auto state = std::make_shared<HighFreqState>();
+  engine.add_state(state);
 
-  std::cout << "[C++] Starting Engine at 10Hz..." << std::endl;
+  std::cout << "[C++] Starting Engine..." << std::endl;
   engine.start();
 
-  // Sleep for 1.5 seconds to allow the counter to hit 10 and then some
-  std::this_thread::sleep_for(std::chrono::milliseconds(1500));
+  std::this_thread::sleep_for(std::chrono::milliseconds(3500));
 
   std::cout << "[C++] Shutting down..." << std::endl;
   engine.stop();
