@@ -1,0 +1,11 @@
+{
+    "ROBOT_ID": "YOUR-ROBOT-NAME",
+    "MISSION_NAME": "Your Mission Title",
+    "SAFETY": {
+        "MAX_TEMP": 80.0,
+        "MIN_BATTERY": 15
+    },
+    "PARAMETERS": {
+        "COMMENT": "Add your custom robot values here (e.g. speed, PID gains, sensor offsets)"
+    }
+}

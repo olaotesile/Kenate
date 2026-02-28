@@ -1,0 +1,7 @@
+recursive-include include/kenate *.hpp
+include python/bindings.cpp
+recursive-include python/kenate/templates *.json *.py
+include README.md
+include INSTALL.md
+include LICENSE
+include pyproject.toml

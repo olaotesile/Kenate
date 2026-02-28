@@ -1,0 +1,2 @@
+[console_scripts]
+kenate = kenate.cli:main

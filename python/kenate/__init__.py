@@ -1,4 +1,7 @@
-import kenate_bindings as _kb
+try:
+    from . import bindings as _kb
+except ImportError:
+    from . import bindings_sim as _kb
 import time
 
 class BaseState(_kb.BaseState):

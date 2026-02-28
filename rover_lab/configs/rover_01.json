@@ -1,0 +1,18 @@
+{
+    "ROBOT_ID": "WHEEL-BOT-01",
+    "MISSION_NAME": "Warehouse Navigation",
+    "HARDWARE": {
+        "LEFT_MOTOR_PINS": [
+            17,
+            27
+        ],
+        "RIGHT_MOTOR_PINS": [
+            22,
+            23
+        ]
+    },
+    "SAFETY": {
+        "MAX_WHEEL_SPEED": 3.0,
+        "STALL_DETECT_CURRENT": 2.5
+    }
+}

@@ -1,0 +1,16 @@
+{
+    "ROBOT_ID": "KENATE-ALPHA-01",
+    "MISSION_NAME": "High-Altitude Delivery",
+    "TARGET_HEIGHT": 10.0,
+    "CRUISE_VELOCITY": 0.8,
+    "SAFETY": {
+        "MAX_TEMP": 80.0,
+        "MIN_SIGNAL": 25,
+        "MIN_BATTERY": 15
+    },
+    "PID_SETTINGS": {
+        "P": 0.5,
+        "I": 0.1,
+        "D": 0.01
+    }
+}

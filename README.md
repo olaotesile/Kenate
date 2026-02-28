@@ -1,45 +1,52 @@
-# Kenate
+KENATE ROBOTICS FRAMEWORK
+The high-performance foundation for modern autonomous robotics.
 
-Kenate is a state-driven robotics framework.
-It lets you declare how a robot should behave based on sensor state, while running high-performance C++ under the hood to ensure ~zero-lag execution.
+Kenate is a dual-core robotics framework designed by Euretix Labs. It combines a high-speed C++17 Heart (1000Hz) with a flexible Python Soul, allowing engineers to build mission-critical autonomous systems (Drones, Rovers, Arms) in minutes, not months.
 
-## Why?
-Most robotics code is a mess of nested `if/else` statements. Kenate flips this by treating robot behavior as a Finite State Machine (FSM). You define the states, define the triggers, and let the C++ engine handle the real-time execution.
+Key Features
 
-## Features
-*   **State-over-Scripts**: Encapsulate behavior in discrete `State` classes.
-*   **Deterministic Engine**: 1000Hz C++ control loop using `std::chrono::steady_clock` for precise timing.
-*   **Hardware Abstraction Layer (HAL)**: Interfaces for Motors and Sensors, with Mock implementations for testing.
-*   **Python Bindings**: Write high-performance States in Python (inheriting from `BaseState`) that run within the C++ engine.
-*   **Header-Only Core**: Easy to integrate.
+- 1000Hz Real-Time Engine: Built in C++ for sub-millisecond control loop precision.
+- **Dual-Core API**: Write your heavy logic in C++ and your high-level "Personalities" in Python.
+- **The Standard Library**: Pre-built behaviors like `PIDState`, `SequenceState`, and `WaitState`.
+- **The Black Box**: High-frequency telemetry logging for post-mission analysis.
+- **Universal HAL**: A Hardware Abstraction Layer that runs on anything from a Laptop to a Raspberry Pi.
+- **Enterprise Config**: Separate your robot's body data from its brain logic with JSON profiles.
 
-## Architecture
-Kenate is built in layers:
-1.  **The Engine (C++)**: Manages the hardware loop (1000Hz) and memory.
-2.  **The Abstractor (C++)**: Handles state transitions and priorities.
-3.  **The Bridge (Pybind11)**: Exposes the power of C++ to a flexible Python interface.
+## 🛠️ Quick Start
 
-## How to Run
-
-### 1. Build the Project
-Kenate uses CMake and requires Visual Studio 2022.
-
+### 1. Installation
 ```bash
-mkdir build
-cd build
-cmake -G "Visual Studio 17 2022" ..
-cmake --build . --config Release
+# Clone the repository
+git clone https://github.com/euretix/kenate.git
+cd kenate
+
+# Install as a professional package
+pip install .
 ```
 
-### 2. Run C++ Example (Simple Loop)
-The C++ example demonstrates the 1000Hz deterministic loop and HAL usage.
+### 2. Scaffold a New Project
 ```bash
-./build/Release/simple_loop.exe
+kenate init MarsRover
+cd MarsRover
 ```
 
-### 3. Run Python Patrol Robot
-The Python example demonstrates state inheritance, switching, and hardware control from Python.
+### 3. Run a Mission
 ```bash
-python examples/patrol_robot.py
+kenate run src/mission_alpha.py
 ```
-*Note: The script automatically adds `build/Release` to `sys.path` to find the `kenate_bindings` module.*
+
+## 📜 Documentation
+
+For a deep dive into the architecture, safety protocols, and API catalogs, please refer to the [Official Technical Manual](./KENATE_MANUAL.txt).
+
+## 🌍 Ecosystem Status
+
+- [x] **v1.0 Core**: Completed
+- [x] **Standard Library**: Completed
+- [x] **CLI Toolbox**: Completed
+- [ ] **Web Visualizer**: In Development (v1.1)
+- [ ] **Hardware Connectors**: In Development
+
+---
+
+Developed with ❤️ by **Euretix Labs**.

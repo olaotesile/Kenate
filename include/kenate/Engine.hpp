@@ -16,6 +16,7 @@ public:
   ~Engine() { stop(); }
 
   void add_state(std::shared_ptr<BaseState> state) {
+    state->set_engine(this);
     states_[state->name()] = state;
     if (!current_state_) {
       current_state_ = state;
