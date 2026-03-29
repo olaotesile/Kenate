@@ -1,5 +1,7 @@
-import time
+import atexit
 import os
+import threading
+import time
 
 """
 KENATE STANDARD LIBRARY - PHASE 1
@@ -104,24 +106,66 @@ class BlackBoxLogger:
     BLACK BOX LOGGER (BlackBoxLogger())
     Purpose: Captures high-frequency (1000Hz) telemetry data for analysis.
     """
-    def __init__(self, filename="mission_log.csv"):
+    def __init__(self, filename="mission_log.csv", flush_interval=0.5, buffer_size=256):
         self.filename = filename
         self.log_dir = ".kenate_logs"
         self.path = os.path.join(os.getcwd(), self.log_dir, self.filename)
+        self.flush_interval = flush_interval
+        self.buffer_size = buffer_size
+        self._buffer = []
+        self._last_flush = time.monotonic()
+        self._lock = threading.Lock()
         
         if not os.path.exists(self.log_dir):
             os.makedirs(self.log_dir)
             
         # Initialize the log file with headers
-        with open(self.path, 'w') as f:
-            f.write("timestamp,state,height,distance,battery,temp,signal\n")
+        self._file = open(self.path, 'w', buffering=1)
+        self._file.write("timestamp,state,height,distance,battery,temp,signal\n")
+        atexit.register(self.close)
 
     def log(self, state_name, sensors):
         """Writes a single entry to the telemetry log."""
         timestamp = time.monotonic()
         data = f"{timestamp},{state_name},{sensors['height']},{sensors['distance']},{sensors['battery']},{sensors['temp']},{sensors['signal']}\n"
-        with open(self.path, 'a') as f:
-            f.write(data)
+        with self._lock:
+            self._buffer.append(data)
+            now = time.monotonic()
+            if len(self._buffer) >= self.buffer_size or (now - self._last_flush) >= self.flush_interval:
+                self._flush_locked(now)
+
+    def _flush_locked(self, now=None):
+        if not self._buffer:
+            return
+        if now is None:
+            now = time.monotonic()
+        self._file.writelines(self._buffer)
+        self._buffer.clear()
+        self._file.flush()
+        self._last_flush = now
+
+    def flush(self):
+        with self._lock:
+            self._flush_locked()
+
+    def close(self):
+        with self._lock:
+            if self._file:
+                self._flush_locked()
+                self._file.close()
+                self._file = None
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc, tb):
+        self.close()
+
+    def __del__(self):
+        try:
+            self.close()
+        except Exception:
+            pass
 
 class WatchdogState:
     """
@@ -139,3 +183,12 @@ class WatchdogState:
     def check_health(self):
         """Returns False if a timeout has occurred."""
         return (time.monotonic() - self.last_heartbeat) < self.timeout
+
+def default_safety_check(state, max_temp=85.0, min_battery=20.0, min_signal=20.0):
+    if state is None:
+        return True
+    return (
+        state.get_system_temperature() <= max_temp
+        and state.get_battery_level() >= min_battery
+        and state.get_signal_strength() >= min_signal
+    )

@@ -71,7 +71,9 @@ PYBIND11_MODULE(bindings, m) {
       .def("set_state", &kenate::Engine::set_state)
       .def("start", (void (kenate::Engine::*)()) &kenate::Engine::start)
       .def("stop", &kenate::Engine::stop)
-      .def("set_frequency", &kenate::Engine::set_frequency);
+      .def("set_frequency", &kenate::Engine::set_frequency)
+      .def("get_current_state", &kenate::Engine::get_current_state)
+      .def("get_current_state_name", &kenate::Engine::get_current_state_name);
 
   py::class_<kenate::SafetyState, kenate::BaseState, std::shared_ptr<kenate::SafetyState>>(m, "SafetyState")
       .def(py::init<>());

@@ -22,6 +22,16 @@ class BaseHardware:
         print(f"[HAL] Disconnecting: {self.name}.")
         self.is_connected = False
 
+
+def require_serial():
+    try:
+        import serial  # type: ignore
+        return serial
+    except Exception as e:
+        raise RuntimeError(
+            "pyserial is required for serial hardware. Install with: pip install pyserial"
+        ) from e
+
 class GPIOMotor(BaseHardware):
     """
     GPIO MOTOR (GPIOMotor())

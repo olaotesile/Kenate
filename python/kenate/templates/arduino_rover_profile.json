@@ -1,0 +1,23 @@
+{
+    "ROBOT_ID": "ROVER-01",
+    "HARDWARE_PROFILE": "ARDUINO_TB6612_HCSR04",
+    "SERIAL": {
+        "PORT": "COM3",
+        "BAUDRATE": 115200
+    },
+    "SENSORS": {
+        "DISTANCE": "distance"
+    },
+    "MOTORS": {
+        "LEFT": "left",
+        "RIGHT": "right"
+    },
+    "BEHAVIOR": {
+        "FORWARD_SPEED": 0.4,
+        "STOP_DISTANCE_CM": 20.0
+    },
+    "SAFETY": {
+        "MAX_TEMP": 85.0,
+        "MIN_BATTERY": 20.0
+    }
+}

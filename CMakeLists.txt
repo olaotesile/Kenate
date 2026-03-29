@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.12)
-project(kenate VERSION 0.1.0 LANGUAGES CXX)
+project(kenate VERSION 1.0.6 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -28,4 +28,8 @@ target_link_libraries(simple_loop kenate_core)
 # Python bindings
 pybind11_add_module(kenate_bindings python/bindings.cpp)
 target_link_libraries(kenate_bindings PRIVATE kenate_core)
-set_target_properties(kenate_bindings PROPERTIES OUTPUT_NAME "kenate_bindings")
+set_target_properties(kenate_bindings PROPERTIES
+  OUTPUT_NAME "bindings"
+  LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/python/kenate"
+  RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/python/kenate"
+)

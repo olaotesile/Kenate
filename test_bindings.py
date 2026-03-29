@@ -2,14 +2,14 @@ import sys
 import os
 import time
 
-# Add build/Release to path to find kenate_bindings
-sys.path.append(os.path.join(os.getcwd(), 'build', 'Release'))
+# Add python package path to find kenate.bindings
+sys.path.insert(0, os.path.join(os.getcwd(), 'python'))
 
 try:
-    import kenate_bindings
-    print("Successfully imported kenate_bindings")
+    from kenate import bindings as kenate_bindings
+    print("Successfully imported kenate.bindings")
 except ImportError as e:
-    print(f"Failed to import kenate_bindings: {e}")
+    print(f"Failed to import kenate.bindings: {e}")
     sys.exit(1)
 
 class PyHighFreqState(kenate_bindings.BaseState):

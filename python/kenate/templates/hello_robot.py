@@ -3,7 +3,7 @@ import time
 
 """
 HELLO ROBOT MISSION
-This is a standard template for verifying your Kenate installation.
+Your first handshake with the engine. If this runs, your robot brain is awake.
 """
 
 class GreetState(BaseState):
@@ -28,7 +28,7 @@ def main():
     # 2. Add the Greeting State
     my_robot.create_state("Greeting", GreetState)
     
-    # 3. Start for 5 seconds (with Graceful Shutdown)
+    # 3. Start for ~5 seconds (with graceful shutdown)
     try:
         my_robot.start()
         # Keep the main thread alive while the C++ engine runs

@@ -36,21 +36,32 @@ class Engine:
         self.current_state = None
         self.pending_state_name = None
         self.running = False
-        self.frequency = 100
+        self.frequency = 1000
         self.thread = None
+        self._lock = threading.Lock()
 
     def add_state(self, state):
-        state.engine = self
-        self.states[state.name] = state
-        if not self.current_state:
-            self.current_state = state
+        with self._lock:
+            state.engine = self
+            self.states[state.name] = state
+            if not self.current_state:
+                self.current_state = state
 
     def set_state(self, name):
-        if name in self.states:
-            self.pending_state_name = name
+        with self._lock:
+            if name in self.states:
+                self.pending_state_name = name
 
     def set_frequency(self, hz):
         self.frequency = hz
+
+    def get_current_state(self):
+        with self._lock:
+            return self.current_state
+
+    def get_current_state_name(self):
+        with self._lock:
+            return self.current_state.name if self.current_state else ""
 
     def start(self, initial_state=None):
         if initial_state:
@@ -66,25 +77,37 @@ class Engine:
             self.thread.join()
 
     def _loop(self):
-        print(f"[SIMULATOR] Starting 1000Hz Python Heartbeat...")
-        if self.current_state:
-            self.current_state.on_enter()
+        print(f"[SIMULATOR] Starting {self.frequency}Hz Python Heartbeat...")
+        with self._lock:
+            current_state = self.current_state
+        if current_state:
+            current_state.on_enter()
 
         interval = 1.0 / self.frequency
         next_tick = time.time()
 
         while self.running:
             # Handle State Transition
-            if self.pending_state_name:
-                if self.current_state:
-                    self.current_state.on_exit()
-                self.current_state = self.states[self.pending_state_name]
-                self.pending_state_name = None
-                self.current_state.on_enter()
+            exit_state = None
+            enter_state = None
+            with self._lock:
+                if self.pending_state_name:
+                    if self.current_state:
+                        exit_state = self.current_state
+                    self.current_state = self.states[self.pending_state_name]
+                    self.pending_state_name = None
+                    enter_state = self.current_state
+
+                current_state = self.current_state
+
+            if exit_state:
+                exit_state.on_exit()
+            if enter_state:
+                enter_state.on_enter()
 
             # Tick
-            if self.current_state:
-                self.current_state.on_update()
+            if current_state:
+                current_state.on_update()
 
             next_tick += interval
             sleep_time = next_tick - time.time()

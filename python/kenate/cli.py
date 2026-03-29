@@ -2,6 +2,7 @@ import os
 import sys
 import shutil
 import argparse
+import runpy
 
 """
 KENATE COMMAND LINE INTERFACE (CLI)
@@ -34,18 +35,30 @@ def init_project(name):
     # 1. Robot Profile
     shutil.copy(os.path.join(template_dir, "robot_profile_template.json"), 
                 os.path.join(base_dir, "configs", "default_robot.json"))
+
+    # 1b. Arduino Rover Profile
+    if os.path.exists(os.path.join(template_dir, "arduino_rover_profile.json")):
+        shutil.copy(os.path.join(template_dir, "arduino_rover_profile.json"),
+                    os.path.join(base_dir, "configs", "arduino_rover.json"))
     
     # 2. Hello World Mission
     shutil.copy(os.path.join(template_dir, "hello_robot.py"), 
                 os.path.join(base_dir, "examples", "hello_robot.py"))
+
+    # 3. Arduino Rover Template
+    if os.path.exists(os.path.join(template_dir, "arduino_rover.py")):
+        shutil.copy(os.path.join(template_dir, "arduino_rover.py"),
+                    os.path.join(base_dir, "examples", "arduino_rover.py"))
     
     print(f" [OK] Seeded templates and example mission.")
-
-    print(f"\nSUCCESS: Project '{name}' created. Type 'cd {name}' to begin.")
+    print(f"\nSUCCESS: Project '{name}' created. Type 'cd {name}' to begin. (You got this.)")
 
 def run_mission(script_path):
     if not os.path.exists(script_path):
         print(f"[ERROR] Mission script not found: {script_path}")
+        return
+    if not os.path.isfile(script_path):
+        print(f"[ERROR] Mission path is not a file: {script_path}")
         return
 
     print(f"--- LAUNCHING KENATE MISSION: {os.path.basename(script_path)} ---")
@@ -55,10 +68,10 @@ def run_mission(script_path):
     sys.path.append(mission_dir)
     
     # 2. Execute the mission script
-    # We use exec() to run the script within the current context
-    with open(script_path, "r") as f:
-        code = f.read()
-        exec(code, {'__name__': '__main__', 'sys': sys, 'os': os})
+    try:
+        runpy.run_path(script_path, run_name="__main__")
+    except Exception as e:
+        print(f"[ERROR] Mission crashed: {e}")
 
 def main():
     parser = argparse.ArgumentParser(description="Kenate Robotics Framework CLI")
